@@ -56,9 +56,13 @@ project (sensors CXX)
 
 set (ADC_SRC_FILES src/Utils.cpp src/ADCSensor.cpp src/Thresholds.cpp)
 
-set (CPU_SRC_FILES src/Utils.cpp src/CPUSensor.cpp src/Thresholds.cpp)
+if (NOT DISABLE_CPU)
+    set (CPU_SRC_FILES src/Utils.cpp src/CPUSensor.cpp src/Thresholds.cpp)
+endif ()
 
-set (EXIT_AIR_SRC_FILES src/Utils.cpp src/Thresholds.cpp)
+if (NOT DISABLE_EXIT_AIR)
+    set (EXIT_AIR_SRC_FILES src/Utils.cpp src/Thresholds.cpp)
+endif ()
 
 set (FAN_SRC_FILES src/TachSensor.cpp src/PwmSensor.cpp src/Utils.cpp
      src/Thresholds.cpp)
@@ -66,16 +70,24 @@ set (FAN_SRC_FILES src/TachSensor.cpp src/PwmSensor.cpp src/Utils.cpp
 set (HWMON_TEMP_SRC_FILES src/Utils.cpp src/HwmonTempSensor.cpp
      src/Thresholds.cpp)
 
-set (INTRUSION_SRC_FILES src/Utils.cpp src/ChassisIntrusionSensor.cpp)
+if (NOT DISABLE_INTRUSION)
+    set (INTRUSION_SRC_FILES src/Utils.cpp src/ChassisIntrusionSensor.cpp)
+endif ()
 
-set (IPMB_SRC_FILES src/Utils.cpp src/Thresholds.cpp)
+if (NOT DISABLE_IPMB)
+    set (IPMB_SRC_FILES src/Utils.cpp src/Thresholds.cpp)
+endif ()
 
-set (MCUTEMP_SRC_FILES src/Utils.cpp src/Thresholds.cpp)
+if (NOT DISABLE_MCUTEMP)
+    set (MCUTEMP_SRC_FILES src/Utils.cpp src/Thresholds.cpp)
+endif ()
 
 set (PSU_SRC_FILES src/Utils.cpp src/PSUSensor.cpp src/Thresholds.cpp
      src/PwmSensor.cpp src/PSUEvent.cpp)
 
-set (NVME_SRC_FILES src/Utils.cpp src/NVMeSensorMain.cpp src/NVMeSensor.cpp src/Thresholds.cpp)
+if (NOT DISABLE_NVME)
+    set (NVME_SRC_FILES src/Utils.cpp src/NVMeSensorMain.cpp src/NVMeSensor.cpp src/Thresholds.cpp)
+endif ()
 
 set (EXTERNAL_PACKAGES Boost sdbusplus-project nlohmann-json)
 set (SENSOR_LINK_LIBS -lsystemd stdc++fs sdbusplus)
@@ -157,15 +169,19 @@ add_dependencies (adcsensor sdbusplus-project)
 target_link_libraries (adcsensor ${SENSOR_LINK_LIBS})
 target_link_libraries (adcsensor gpiodcxx)
 
-add_executable (cpusensor src/CPUSensorMain.cpp ${CPU_SRC_FILES})
-add_dependencies (cpusensor sdbusplus-project)
-target_link_libraries (cpusensor ${SENSOR_LINK_LIBS})
-target_link_libraries (cpusensor gpiodcxx)
+if (NOT DISABLE_CPU)
+    add_executable (cpusensor src/CPUSensorMain.cpp ${CPU_SRC_FILES})
+    add_dependencies (cpusensor sdbusplus-project)
+    target_link_libraries (cpusensor ${SENSOR_LINK_LIBS})
+    target_link_libraries (cpusensor gpiodcxx)
+endif ()
 
-add_executable (exitairtempsensor src/ExitAirTempSensor.cpp
+if (NOT DISABLE_EXIT_AIR)
+    add_executable (exitairtempsensor src/ExitAirTempSensor.cpp
                 ${EXIT_AIR_SRC_FILES})
-add_dependencies (exitairtempsensor sdbusplus-project)
-target_link_libraries (exitairtempsensor ${SENSOR_LINK_LIBS})
+    add_dependencies (exitairtempsensor sdbusplus-project)
+    target_link_libraries (exitairtempsensor ${SENSOR_LINK_LIBS})
+endif ()
 
 add_executable (fansensor src/FanMain.cpp ${FAN_SRC_FILES})
 add_dependencies (fansensor sdbusplus-project)
@@ -176,21 +192,27 @@ add_executable (hwmontempsensor src/HwmonTempMain.cpp ${HWMON_TEMP_SRC_FILES})
 add_dependencies (hwmontempsensor sdbusplus-project)
 target_link_libraries (hwmontempsensor ${SENSOR_LINK_LIBS})
 
-add_executable (intrusionsensor src/IntrusionSensorMain.cpp
+if (NOT DISABLE_INTRUSION)
+    add_executable (intrusionsensor src/IntrusionSensorMain.cpp
                 ${INTRUSION_SRC_FILES})
-add_dependencies (intrusionsensor sdbusplus-project)
-target_link_libraries (intrusionsensor ${SENSOR_LINK_LIBS})
-target_link_libraries (intrusionsensor i2c)
-target_link_libraries (intrusionsensor gpiodcxx)
+    add_dependencies (intrusionsensor sdbusplus-project)
+    target_link_libraries (intrusionsensor ${SENSOR_LINK_LIBS})
+    target_link_libraries (intrusionsensor i2c)
+    target_link_libraries (intrusionsensor gpiodcxx)
+endif ()
 
-add_executable (ipmbsensor src/IpmbSensor.cpp ${IPMB_SRC_FILES})
-add_dependencies (ipmbsensor sdbusplus-project)
-target_link_libraries (ipmbsensor ${SENSOR_LINK_LIBS})
+if (NOT DISABLE_IPMB)
+    add_executable (ipmbsensor src/IpmbSensor.cpp ${IPMB_SRC_FILES})
+    add_dependencies (ipmbsensor sdbusplus-project)
+    target_link_libraries (ipmbsensor ${SENSOR_LINK_LIBS})
+endif ()
 
-add_executable (mcutempsensor src/MCUTempSensor.cpp ${MCUTEMP_SRC_FILES})
-add_dependencies (mcutempsensor sdbusplus-project)
-target_link_libraries (mcutempsensor ${SENSOR_LINK_LIBS})
-target_link_libraries (mcutempsensor i2c)
+if (NOT DISABLE_MCUTEMP)
+    add_executable (mcutempsensor src/MCUTempSensor.cpp ${MCUTEMP_SRC_FILES})
+    add_dependencies (mcutempsensor sdbusplus-project)
+    target_link_libraries (mcutempsensor ${SENSOR_LINK_LIBS})
+    target_link_libraries (mcutempsensor i2c)
+endif ()
 
 add_executable (psusensor src/PSUSensorMain.cpp ${PSU_SRC_FILES})
 add_dependencies (psusensor sdbusplus-project)
